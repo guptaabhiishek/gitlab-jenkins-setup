@@ -1,0 +1,29 @@
+Vagrant.configure(2) do |config|
+ 
+  config.vm.box = "puppetlabs/centos-6.6-64-puppet-enterprise"
+  config.vm.network "private_network", ip: "10.29.202.10"
+  
+  config.vm.provider "virtualbox" do |vb, override|
+    vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+    vb.customize ["modifyvm", :id, "--cpus", "1"]
+    vb.customize ["modifyvm", :id, "--memory", "1024"]
+    vb.gui = true	
+
+  end  
+  
+  config.vm.provision "shell", inline: <<-SHELL
+
+	#install postfix mail server
+   	sudo yum -y install curl openssh-server postfix cronie
+	sudo service postfix start
+	sudo chkconfig postfix on
+	sudo lokkit -s http -s ssh
+   
+	#install gitlab
+	curl https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.rpm.sh | sudo bash
+	sudo yum -y install gitlab-ce
+	sudo gitlab-ctl reconfigure
+
+   SHELL
+end
+

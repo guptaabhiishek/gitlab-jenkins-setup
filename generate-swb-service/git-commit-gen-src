@@ -1,0 +1,19 @@
+#!/bin/bash
+
+#Create remote repo with service name in git lab. Change private gitlab token and gitlab host
+curl --header "PRIVATE-TOKEN: 9ZxqaSZEoGRujxvL-LtZ" -X POST "http://10.29.202.10/api/v3/projects?name=${SERVICE_NAME}&public=true"
+#remove template git local repo
+rm -rf .git
+# initialise and commit generated service files
+git init
+git add .
+git commit -m "Initial version of generated service"
+
+#git checkout -b $SERVICE_NAME
+#git remote add origin http://root:password@10.29.202.10/root/swb-service.git
+#git push -u origin $SERVICE_NAME
+#push generated service to new remote repo. change your gitlab user/password or setup ssh key
+git remote add origin http://root:password@10.29.202.10/root/${SERVICE_NAME}.git
+git push -u origin master
+#Generate jennkins job and setup web hooks
+curl -X POST "http://root:password@10.29.202.20:8080/createItem?name=BuildDeploy${SERVICE_NAME}" --data-binary "@build_jenkins_job_config.xml" -H "Content-Type: text/xml"

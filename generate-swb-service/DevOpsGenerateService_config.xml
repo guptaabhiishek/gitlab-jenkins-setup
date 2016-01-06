@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description>Devo Ops Generate service </description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>SERVICE_NAME</name>
+          <description>provide name of the service</description>
+          <defaultValue>Testservice</defaultValue>
+        </hudson.model.StringParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+  </properties>
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@2.4.1">
+    <configVersion>2</configVersion>
+    <userRemoteConfigs>
+      <hudson.plugins.git.UserRemoteConfig>
+        <url>http://10.29.202.10/root/generate-swb-service.git</url>
+      </hudson.plugins.git.UserRemoteConfig>
+    </userRemoteConfigs>
+    <branches>
+      <hudson.plugins.git.BranchSpec>
+        <name>*/master</name>
+      </hudson.plugins.git.BranchSpec>
+    </branches>
+    <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+    <submoduleCfg class="list"/>
+    <extensions>
+      <hudson.plugins.git.extensions.impl.WipeWorkspace/>
+    </extensions>
+  </scm>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.plugins.groovy.SystemGroovy plugin="groovy@1.27">
+      <scriptSource class="hudson.plugins.groovy.FileScriptSource">
+        <scriptFile>GenerateService.groovy</scriptFile>
+      </scriptSource>
+      <bindings></bindings>
+      <classpath></classpath>
+    </hudson.plugins.groovy.SystemGroovy>
+    <hudson.plugins.gradle.Gradle plugin="gradle@1.24">
+      <description>jenkinsgitlab</description>
+      <switches></switches>
+      <tasks>build</tasks>
+      <rootBuildScriptDir></rootBuildScriptDir>
+      <buildFile></buildFile>
+      <gradleName>jenkins-gradle</gradleName>
+      <useWrapper>false</useWrapper>
+      <makeExecutable>true</makeExecutable>
+      <fromRootBuildScriptDir>true</fromRootBuildScriptDir>
+      <useWorkspaceAsHome>false</useWorkspaceAsHome>
+    </hudson.plugins.gradle.Gradle>
+    <hudson.tasks.Shell>
+      <command>${WORKSPACE}/git-commit-gen-src
+
+#Create remote repo with service name in git lab
+#curl --header &quot;PRIVATE-TOKEN: 8paihS4PKCR1FkHGqMr5&quot; -X POST &quot;http://10.29.202.10/api/v3/projects?name=$SERVICE_NAME&amp;public=true&quot;
+#remove template git local repo
+#rm -rf .git
+# initialise and commit generated files
+#git init
+#git add .
+#git commit -m &quot;Initial version of generated service&quot;
+
+#git checkout -b $SERVICE_NAME
+#git remote add origin http://root:password@10.29.202.10/root/swb-service.git
+#git push -u origin $SERVICE_NAME
+#push generated service to new remote repo
+#git remote add origin http://root:password@10.29.202.10/root/$SERVICE_NAME.git</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers/>
+  <buildWrappers/>
+</project>
